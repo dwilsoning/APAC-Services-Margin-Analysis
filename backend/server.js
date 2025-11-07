@@ -21,6 +21,9 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
 });
 
+// Make pool available to routes
+app.locals.pool = pool;
+
 // Test database connection
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
@@ -30,10 +33,20 @@ pool.query('SELECT NOW()', (err, res) => {
   }
 });
 
+// Import routes
+const clientsRouter = require('./routes/clients');
+const projectsRouter = require('./routes/projects');
+const financialDataRouter = require('./routes/financialData');
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'APAC Services Margin Analysis API is running' });
 });
+
+// API routes
+app.use('/api/clients', clientsRouter);
+app.use('/api/projects', projectsRouter);
+app.use('/api/financial-data', financialDataRouter);
 
 // Start server
 app.listen(PORT, () => {
