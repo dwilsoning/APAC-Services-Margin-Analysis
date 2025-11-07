@@ -25,6 +25,7 @@ import {
 } from '@mui/icons-material';
 import DataEntry from './pages/DataEntry';
 import StaffRoles from './pages/StaffRoles';
+import ThirdPartyResources from './pages/ThirdPartyResources';
 import axios from 'axios';
 import './App.css';
 
@@ -130,6 +131,15 @@ function App() {
               </Button>
               <Button
                 color="inherit"
+                component={Link}
+                to="/third-party"
+                startIcon={<PeopleIcon />}
+                sx={{ fontWeight: 500 }}
+              >
+                Third-Party
+              </Button>
+              <Button
+                color="inherit"
                 startIcon={<HelpIcon />}
                 onClick={() => setShowHelp(true)}
                 sx={{
@@ -151,6 +161,7 @@ function App() {
             <Route path="/data-entry" element={<DataEntry />} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/staff-roles" element={<StaffRoles />} />
+            <Route path="/third-party" element={<ThirdPartyResources />} />
           </Routes>
         </Box>
 

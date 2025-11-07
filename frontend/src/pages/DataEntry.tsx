@@ -15,15 +15,18 @@ import {
   Business as BusinessIcon,
   Work as WorkIcon,
   Assessment as AssessmentIcon,
+  Assignment as AssignmentIcon,
 } from '@mui/icons-material';
 import ClientForm from '../components/ClientForm';
 import ProjectForm from '../components/ProjectForm';
 import FinancialDataForm from '../components/FinancialDataForm';
+import ResourceAllocationForm from '../components/ResourceAllocationForm';
 
 const DataEntry: React.FC = () => {
   const [clientFormOpen, setClientFormOpen] = useState(false);
   const [projectFormOpen, setProjectFormOpen] = useState(false);
   const [financialFormOpen, setFinancialFormOpen] = useState(false);
+  const [resourceFormOpen, setResourceFormOpen] = useState(false);
 
   const handleSuccess = () => {
     // Refresh data or show success message
@@ -115,6 +118,31 @@ const DataEntry: React.FC = () => {
               </CardActions>
             </Card>
           </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Card>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <AssignmentIcon sx={{ fontSize: 40, color: '#F59E0B', mr: 2 }} />
+                  <Typography variant="h6">Allocate Resources</Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  Assign staff or third-party resources to projects with hours for COGS calculation.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  fullWidth
+                  onClick={() => setResourceFormOpen(true)}
+                  sx={{ bgcolor: '#F59E0B', '&:hover': { bgcolor: '#D97706' } }}
+                >
+                  Allocate Resource
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
         </Grid>
 
         <Box sx={{ mt: 4, p: 3, bgcolor: 'info.lighter', borderRadius: 1 }}>
@@ -126,6 +154,7 @@ const DataEntry: React.FC = () => {
               <li>Start by adding a <strong>Client</strong> - this represents the company or organization</li>
               <li>Create a <strong>Project</strong> and link it to the client</li>
               <li>Add <strong>Financial Data</strong> for each month/period to track project performance</li>
+              <li><strong>Allocate Resources</strong> (staff/third-party) to projects with hours worked - this calculates COGS automatically</li>
               <li>View your data in the Dashboard for analysis and insights</li>
             </ol>
           </Typography>
@@ -146,6 +175,11 @@ const DataEntry: React.FC = () => {
       <FinancialDataForm
         open={financialFormOpen}
         onClose={() => setFinancialFormOpen(false)}
+        onSuccess={handleSuccess}
+      />
+      <ResourceAllocationForm
+        open={resourceFormOpen}
+        onClose={() => setResourceFormOpen(false)}
         onSuccess={handleSuccess}
       />
     </Container>
