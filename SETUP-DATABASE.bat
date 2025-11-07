@@ -25,35 +25,28 @@ if not exist "%BACKEND_DIR%\.env" (
     exit /b 1
 )
 
-echo [1/4] Starting PostgreSQL service...
-wsl sudo service postgresql start
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Failed to start PostgreSQL
-    echo Please run: wsl sudo service postgresql start
-    pause
-    exit /b 1
-)
-
-echo.
-echo [2/4] Checking PostgreSQL connection...
+echo [1/4] Checking if PostgreSQL is running...
+echo NOTE: PostgreSQL should already be running on your Windows system.
+echo If you get connection errors, make sure PostgreSQL Windows service is running.
 timeout /t 2 /nobreak >nul
 
 echo.
-echo [3/4] Creating database and user...
-echo NOTE: You may be prompted for your Linux password for 'sudo'
+echo [2/4] Creating database and user...
 echo.
 
-wsl bash -c "sudo -u postgres psql -c \"CREATE DATABASE apac_margin_analysis;\" 2>/dev/null || echo 'Database may already exist'"
-wsl bash -c "sudo -u postgres psql -c \"CREATE USER margin_analysis_user WITH PASSWORD 'Diamonds04\$';\" 2>/dev/null || echo 'User may already exist'"
-wsl bash -c "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE apac_margin_analysis TO margin_analysis_user;\""
+REM Use psql directly without wsl wrapper
+psql -U postgres -h 172.27.156.242 -c "CREATE DATABASE apac_margin_analysis;" 2>nul || echo Database may already exist
+psql -U postgres -h 172.27.156.242 -c "CREATE USER margin_analysis_user WITH PASSWORD 'Diamonds04$';" 2>nul || echo User may already exist
+psql -U postgres -h 172.27.156.242 -c "GRANT ALL PRIVILEGES ON DATABASE apac_margin_analysis TO margin_analysis_user;"
 
 echo.
-echo [4/4] Running database schema...
+echo [3/4] Running database schema...
 echo This will create all tables and insert default staff roles...
 echo.
 
 cd /d "%BACKEND_DIR%"
-wsl bash -c "PGPASSWORD='Diamonds04\$' psql -h 172.27.144.1 -U margin_analysis_user -d apac_margin_analysis -f db/schema.sql"
+set PGPASSWORD=Diamonds04$
+psql -h 172.27.156.242 -U margin_analysis_user -d apac_margin_analysis -f db/schema.sql
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
