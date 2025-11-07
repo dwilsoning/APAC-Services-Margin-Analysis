@@ -37,6 +37,9 @@ pool.query('SELECT NOW()', (err, res) => {
 const clientsRouter = require('./routes/clients');
 const projectsRouter = require('./routes/projects');
 const financialDataRouter = require('./routes/financialData');
+const staffRolesRouter = require('./routes/staffRoles');
+const thirdPartyResourcesRouter = require('./routes/thirdPartyResources');
+const projectResourcesRouter = require('./routes/projectResources');
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -47,6 +50,9 @@ app.get('/api/health', (req, res) => {
 app.use('/api/clients', clientsRouter);
 app.use('/api/projects', projectsRouter);
 app.use('/api/financial-data', financialDataRouter);
+app.use('/api/staff-roles', staffRolesRouter);
+app.use('/api/third-party-resources', thirdPartyResourcesRouter);
+app.use('/api/project-resources', projectResourcesRouter);
 
 // Start server
 app.listen(PORT, () => {

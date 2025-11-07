@@ -21,8 +21,10 @@ import {
   Input as InputIcon,
   Upload as UploadIcon,
   Help as HelpIcon,
+  People as PeopleIcon,
 } from '@mui/icons-material';
 import DataEntry from './pages/DataEntry';
+import StaffRoles from './pages/StaffRoles';
 import axios from 'axios';
 import './App.css';
 
@@ -119,6 +121,15 @@ function App() {
               </Button>
               <Button
                 color="inherit"
+                component={Link}
+                to="/staff-roles"
+                startIcon={<PeopleIcon />}
+                sx={{ fontWeight: 500 }}
+              >
+                Staff Roles
+              </Button>
+              <Button
+                color="inherit"
                 startIcon={<HelpIcon />}
                 onClick={() => setShowHelp(true)}
                 sx={{
@@ -139,6 +150,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/data-entry" element={<DataEntry />} />
             <Route path="/upload" element={<Upload />} />
+            <Route path="/staff-roles" element={<StaffRoles />} />
           </Routes>
         </Box>
 
