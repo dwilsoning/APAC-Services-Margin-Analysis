@@ -22,6 +22,18 @@ cd /d "%BACKEND_DIR%"
 echo Backend directory: %CD%
 echo.
 
+REM Check if .env exists
+if not exist "%BACKEND_DIR%\.env" (
+    echo.
+    echo ERROR: Backend .env file not found!
+    echo Please create: %BACKEND_DIR%\.env
+    echo.
+    echo See SETUP.md for configuration details.
+    echo.
+    pause
+    exit /b 1
+)
+
 REM Check if PostgreSQL is running
 echo [1/3] Checking PostgreSQL connection...
 node -e "const {Pool} = require('pg'); require('dotenv').config(); const pool = new Pool({user: process.env.DB_USER, host: process.env.DB_HOST, database: process.env.DB_NAME, password: process.env.DB_PASSWORD, port: process.env.DB_PORT}); pool.query('SELECT NOW()', (err) => { if(err) { console.error('ERROR: PostgreSQL not connected!'); console.error(err.message); process.exit(1); } else { console.log('PostgreSQL is connected.'); } pool.end(); })"

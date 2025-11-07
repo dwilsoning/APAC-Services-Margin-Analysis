@@ -12,31 +12,54 @@ This guide will help you set up and run the APAC Services Margin Analysis applic
 
 ### Step 1: Find Your PostgreSQL IP Address
 
-Open a terminal and run:
-```bash
-ip addr | grep inet | grep eth0 | awk '{print $2}' | cut -d/ -f1
+**Option A - Use the Helper Script (Easiest):**
+
+Double-click: `GET-IP-ADDRESS.bat`
+
+This will display your IP address and tell you exactly what to put in your `.env` file.
+
+**Option B - Manual (Command Prompt):**
+
+Open Command Prompt and run:
+```cmd
+wsl ip addr show eth0 | findstr "inet "
 ```
+
+Look for the line with `inet` and copy the IP address (e.g., `172.27.144.1`)
 
 Your IP should be something like: `172.27.144.1`
 
 ### Step 2: Start PostgreSQL Service
 
-```bash
-sudo service postgresql start
+Open Command Prompt or PowerShell and run:
+```cmd
+wsl sudo service postgresql start
 ```
 
 Verify it's running:
-```bash
-sudo service postgresql status
+```cmd
+wsl sudo service postgresql status
 ```
+
+You should see "online" or "active (running)"
 
 ### Step 3: Create Database and User
 
-```bash
-# Connect to PostgreSQL as the postgres user
-sudo -u postgres psql
+**Option A - Use the Automated Setup (Recommended):**
 
-# Run these commands in the PostgreSQL prompt:
+Double-click: `SETUP-DATABASE.bat`
+
+This will automatically create everything for you!
+
+**Option B - Manual Setup:**
+
+Open Command Prompt and run:
+```cmd
+wsl sudo -u postgres psql
+```
+
+Then in the PostgreSQL prompt, run these commands:
+```sql
 CREATE DATABASE apac_margin_analysis;
 CREATE USER margin_analysis_user WITH PASSWORD 'Diamonds04$';
 GRANT ALL PRIVILEGES ON DATABASE apac_margin_analysis TO margin_analysis_user;
