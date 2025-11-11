@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -65,6 +65,15 @@ export const projectResourcesApi = {
   create: (data: any) => api.post('/project-resources', data),
   update: (id: number, data: any) => api.put(`/project-resources/${id}`, data),
   delete: (id: number) => api.delete(`/project-resources/${id}`),
+};
+
+// Project Entry APIs (Unified form for complete project entry)
+export const projectEntryApi = {
+  create: (data: any) => api.post('/project-entry', data),
+  getAll: () => api.get('/project-entry'),
+  getById: (id: number) => api.get(`/project-entry/${id}`),
+  update: (id: number, data: any) => api.put(`/project-entry/${id}`, data),
+  delete: (id: number) => api.delete(`/project-entry/${id}`),
 };
 
 export default api;

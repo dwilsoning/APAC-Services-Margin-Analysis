@@ -40,6 +40,7 @@ const financialDataRouter = require('./routes/financialData');
 const staffRolesRouter = require('./routes/staffRoles');
 const thirdPartyResourcesRouter = require('./routes/thirdPartyResources');
 const projectResourcesRouter = require('./routes/projectResources');
+const projectEntryRouter = require('./routes/projectEntry');
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -53,6 +54,7 @@ app.use('/api/financial-data', financialDataRouter);
 app.use('/api/staff-roles', staffRolesRouter);
 app.use('/api/third-party-resources', thirdPartyResourcesRouter);
 app.use('/api/project-resources', projectResourcesRouter);
+app.use('/api/project-entry', projectEntryRouter);
 
 // Start server
 app.listen(PORT, () => {

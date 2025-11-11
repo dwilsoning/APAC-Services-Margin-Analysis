@@ -1,80 +1,126 @@
 @echo off
-REM =============================================================================
-REM APAC Services Margin Analysis - Start Script
-REM =============================================================================
-REM This script starts both the backend (PostgreSQL) and frontend servers
-REM Press Ctrl+C to stop both servers
-REM =============================================================================
+setlocal enabledelayedexpansion
 
-echo.
-echo ========================================
-echo APAC Services Margin Analysis
-echo ========================================
-echo.
-echo Starting APAC Margin Analysis with PostgreSQL database...
+echo ================================================
+echo  APAC Services Margin Analysis
+echo ================================================
 echo.
 
-REM Set the backend directory path
-set BACKEND_DIR=C:\Users\dwils\Claude-Projects\APAC-Services-Margin-Analysis\backend
-
-REM Change to backend directory
-cd /d "%BACKEND_DIR%"
-echo Backend directory: %CD%
+REM Step 1: Stop any existing servers
+echo [1/4] Stopping any existing servers...
 echo.
 
-REM Check if .env exists
-if not exist "%BACKEND_DIR%\.env" (
+REM Kill any Node.js process running on port 5001 (backend)
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :5001 ^| findstr LISTENING 2^>nul') do (
+    echo Found process on port 5001: %%a
+    taskkill /F /PID %%a >nul 2>&1
+    if !errorlevel! == 0 (
+        echo   + Stopped process %%a
+    )
+)
+
+REM Kill any server.js processes
+for /f "tokens=2" %%a in ('tasklist /FI "IMAGENAME eq node.exe" /FO LIST 2^>nul ^| findstr /C:"PID:"') do (
+    wmic process where "ProcessId=%%a" get CommandLine 2>nul | findstr /C:"server.js" >nul 2>&1
+    if !errorlevel! == 0 (
+        echo Found server process: %%a
+        taskkill /F /PID %%a >nul 2>&1
+        if !errorlevel! == 0 (
+            echo   + Stopped server (PID: %%a)
+        )
+    )
+)
+
+REM Kill any Vite dev server processes (frontend) on port 3000
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3000 ^| findstr LISTENING 2^>nul') do (
+    echo Found process on port 3000: %%a
+    taskkill /F /PID %%a >nul 2>&1
+    if !errorlevel! == 0 (
+        echo   + Stopped process %%a
+    )
+)
+
+echo   + All existing servers stopped
+
+echo.
+
+REM Step 2: Validate ports are free
+echo [2/4] Validating ports are free...
+echo.
+
+set "port5001_free=1"
+set "port3000_free=1"
+
+netstat -aon | findstr :5001 | findstr LISTENING >nul 2>&1
+if !errorlevel! == 0 (
+    set "port5001_free=0"
+    echo   WARNING: Port 5001 still in use!
+) else (
+    echo   + Port 5001 is free
+)
+
+netstat -aon | findstr :3000 | findstr LISTENING >nul 2>&1
+if !errorlevel! == 0 (
+    set "port3000_free=0"
+    echo   WARNING: Port 3000 still in use!
+) else (
+    echo   + Port 3000 is free
+)
+
+if !port5001_free! == 0 (
     echo.
-    echo ERROR: Backend .env file not found!
-    echo Please create: %BACKEND_DIR%\.env
-    echo.
-    echo See SETUP.md for configuration details.
+    echo ERROR: Port 5001 is still in use. Cannot start backend.
+    echo    Please manually check: netstat -aon ^| findstr :5001
     echo.
     pause
     exit /b 1
 )
 
-REM Check if PostgreSQL is running
-echo [1/3] Checking PostgreSQL connection...
-node -e "const {Pool} = require('pg'); require('dotenv').config(); const pool = new Pool({user: process.env.DB_USER, host: process.env.DB_HOST, database: process.env.DB_NAME, password: process.env.DB_PASSWORD, port: process.env.DB_PORT}); pool.query('SELECT NOW()', (err) => { if(err) { console.error('ERROR: PostgreSQL not connected!'); console.error(err.message); process.exit(1); } else { console.log('PostgreSQL is connected.'); } pool.end(); })"
-if %ERRORLEVEL% NEQ 0 (
+if !port3000_free! == 0 (
     echo.
-    echo ERROR: Cannot connect to PostgreSQL!
-    echo Please ensure PostgreSQL is running and .env is configured correctly.
+    echo ERROR: Port 3000 is still in use. Cannot start frontend.
+    echo    Please manually check: netstat -aon ^| findstr :3000
     echo.
     pause
     exit /b 1
 )
 
 echo.
-echo [2/3] Starting Backend Server (PostgreSQL)...
-start "APAC Margin Analysis Backend" cmd /k "cd /d "%BACKEND_DIR%" && node server.js"
 
-REM Wait for backend to start
+REM Step 3: Start Backend Server
+echo [3/4] Starting Backend Server...
+start /min "APAC Margin Analysis - Backend" cmd /k "cd /d "C:\Users\dwils\Claude-Projects\APAC-Services-Margin-Analysis\backend" && node server.js"
+
+REM Wait 3 seconds for backend to initialize
 timeout /t 3 /nobreak >nul
 
-echo [3/3] Starting Frontend Server...
-set FRONTEND_DIR=C:\Users\dwils\Claude-Projects\APAC-Services-Margin-Analysis\frontend
-cd /d "%FRONTEND_DIR%"
-start "APAC Margin Analysis Frontend" cmd /k "cd /d "%FRONTEND_DIR%" && npm start"
+echo   + Backend server started
+echo.
+
+REM Step 4: Start Frontend Server
+echo [4/4] Starting Frontend Server...
+start /min "APAC Margin Analysis - Frontend" cmd /k "cd /d "C:\Users\dwils\Claude-Projects\APAC-Services-Margin-Analysis\frontend" && npm start"
+
+echo   + Frontend server started
+echo.
+
+REM Wait a moment for frontend to fully start
+timeout /t 2 /nobreak >nul
+
+REM Open the browser
+echo Opening browser...
+start http://localhost:3000
 
 echo.
-echo ========================================
-echo APAC Margin Analysis Started Successfully!
-echo ========================================
+echo ================================================
+echo  Both servers are running!
+echo ================================================
 echo.
 echo Backend:  http://localhost:5001
 echo Frontend: http://localhost:3000
 echo.
-echo Two command windows have been opened:
-echo   1. Backend Server (PostgreSQL) - DO NOT CLOSE
-echo   2. Frontend Server (React) - DO NOT CLOSE
-echo.
-echo To stop the servers:
-echo   - Run stop-margin-analysis.bat
-echo   - OR close both command windows
-echo   - OR press Ctrl+C in each window
-echo.
-echo This window can be safely closed.
+echo The server windows are running minimized in the taskbar.
+echo Browser should open automatically to http://localhost:3000
+echo Close this window when you're done.
 echo.
 pause

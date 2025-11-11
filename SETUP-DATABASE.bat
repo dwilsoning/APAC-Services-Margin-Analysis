@@ -11,6 +11,22 @@ echo APAC Margin Analysis - Database Setup
 echo ========================================
 echo.
 
+REM Get WSL IP address
+echo [1/5] Detecting WSL IP address...
+for /f "tokens=2" %%a in ('wsl ip -4 addr show eth0 ^| findstr "inet "') do (
+    for /f "tokens=1 delims=/" %%b in ("%%a") do set WSL_IP=%%b
+)
+
+if "%WSL_IP%"=="" (
+    echo ERROR: Could not detect WSL IP address!
+    echo Please run GET-IP-ADDRESS.bat to troubleshoot.
+    pause
+    exit /b 1
+)
+
+echo WSL IP Address: %WSL_IP%
+echo.
+
 REM Check if .env file exists
 set BACKEND_DIR=C:\Users\dwils\Claude-Projects\APAC-Services-Margin-Analysis\backend
 
@@ -25,28 +41,35 @@ if not exist "%BACKEND_DIR%\.env" (
     exit /b 1
 )
 
-echo [1/4] Checking if PostgreSQL is running...
+REM Update .env with current IP
+echo [2/5] Updating .env with current IP address...
+powershell -Command "(Get-Content '%BACKEND_DIR%\.env') -replace 'DB_HOST=.*', 'DB_HOST=%WSL_IP%' | Set-Content '%BACKEND_DIR%\.env'"
+echo Updated DB_HOST to %WSL_IP%
+echo.
+
+echo [3/5] Checking if PostgreSQL is running...
 echo NOTE: PostgreSQL should already be running on your Windows system.
 echo If you get connection errors, make sure PostgreSQL Windows service is running.
 timeout /t 2 /nobreak >nul
 
 echo.
-echo [2/4] Creating database and user...
+echo [4/5] Creating database and user...
 echo.
 
-REM Use psql directly without wsl wrapper
-psql -U postgres -h 172.27.156.242 -c "CREATE DATABASE apac_margin_analysis;" 2>nul || echo Database may already exist
-psql -U postgres -h 172.27.156.242 -c "CREATE USER margin_analysis_user WITH PASSWORD 'Diamonds04$';" 2>nul || echo User may already exist
-psql -U postgres -h 172.27.156.242 -c "GRANT ALL PRIVILEGES ON DATABASE apac_margin_analysis TO margin_analysis_user;"
+REM Use detected WSL IP
+psql -U postgres -h %WSL_IP% -c "CREATE DATABASE apac_margin_analysis;" 2>nul || echo Database may already exist
+psql -U postgres -h %WSL_IP% -c "CREATE USER margin_analysis_user WITH PASSWORD 'Diamonds04$';" 2>nul || echo User may already exist
+psql -U postgres -h %WSL_IP% -c "GRANT ALL PRIVILEGES ON DATABASE apac_margin_analysis TO margin_analysis_user;"
+psql -U postgres -h %WSL_IP% -c "GRANT ALL ON SCHEMA public TO margin_analysis_user;"
 
 echo.
-echo [3/4] Running database schema...
+echo [5/5] Running database schema...
 echo This will create all tables and insert default staff roles...
 echo.
 
 cd /d "%BACKEND_DIR%"
 set PGPASSWORD=Diamonds04$
-psql -h 172.27.156.242 -U margin_analysis_user -d apac_margin_analysis -f db/schema.sql
+psql -h %WSL_IP% -U margin_analysis_user -d apac_margin_analysis -f db/schema.sql
 
 if %ERRORLEVEL% NEQ 0 (
     echo.

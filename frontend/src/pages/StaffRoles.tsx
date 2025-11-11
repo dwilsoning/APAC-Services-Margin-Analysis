@@ -19,7 +19,6 @@ import {
   DialogActions,
   TextField,
   Alert,
-  Collapse,
   List,
   ListItem,
   ListItemText,
@@ -27,7 +26,6 @@ import {
 import {
   Edit as EditIcon,
   History as HistoryIcon,
-  Add as AddIcon,
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
 } from '@mui/icons-material';

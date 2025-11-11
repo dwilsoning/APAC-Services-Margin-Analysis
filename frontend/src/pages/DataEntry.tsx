@@ -4,182 +4,70 @@ import {
   Box,
   Typography,
   Button,
-  Card,
-  CardContent,
-  CardActions,
-  Grid,
   Paper,
 } from '@mui/material';
 import {
   Add as AddIcon,
-  Business as BusinessIcon,
-  Work as WorkIcon,
-  Assessment as AssessmentIcon,
-  Assignment as AssignmentIcon,
 } from '@mui/icons-material';
-import ClientForm from '../components/ClientForm';
-import ProjectForm from '../components/ProjectForm';
-import FinancialDataForm from '../components/FinancialDataForm';
-import ResourceAllocationForm from '../components/ResourceAllocationForm';
+import ProjectEntryForm from '../components/ProjectEntryForm';
 
 const DataEntry: React.FC = () => {
-  const [clientFormOpen, setClientFormOpen] = useState(false);
   const [projectFormOpen, setProjectFormOpen] = useState(false);
-  const [financialFormOpen, setFinancialFormOpen] = useState(false);
-  const [resourceFormOpen, setResourceFormOpen] = useState(false);
 
   const handleSuccess = () => {
     // Refresh data or show success message
-    console.log('Form submitted successfully');
+    console.log('Project submitted successfully');
   };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={2} sx={{ p: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Data Entry
+          Project Data Entry
         </Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
-          Use the forms below to manually enter client, project, and financial data.
-          All data will be available in the dashboard for analysis and visualization.
+          Enter complete project information including client details, contract information,
+          financial values, and resource hours allocation.
         </Typography>
 
-        <Grid container spacing={3} sx={{ mt: 2 }}>
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <BusinessIcon sx={{ fontSize: 40, color: 'primary.main', mr: 2 }} />
-                  <Typography variant="h6">Add Client</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Create a new client record with company information, region, and industry details.
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  fullWidth
-                  onClick={() => setClientFormOpen(true)}
-                >
-                  Add Client
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <WorkIcon sx={{ fontSize: 40, color: 'success.main', mr: 2 }} />
-                  <Typography variant="h6">Add Project</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Create a new project linked to a client with project details and timeline.
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<AddIcon />}
-                  fullWidth
-                  onClick={() => setProjectFormOpen(true)}
-                >
-                  Add Project
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <AssessmentIcon sx={{ fontSize: 40, color: 'secondary.main', mr: 2 }} />
-                  <Typography variant="h6">Add Financial Data</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Enter monthly financial metrics including revenue, costs, and expenses.
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  startIcon={<AddIcon />}
-                  fullWidth
-                  onClick={() => setFinancialFormOpen(true)}
-                >
-                  Add Financial Data
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <AssignmentIcon sx={{ fontSize: 40, color: '#F59E0B', mr: 2 }} />
-                  <Typography variant="h6">Allocate Resources</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Assign staff or third-party resources to projects with hours for COGS calculation.
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  fullWidth
-                  onClick={() => setResourceFormOpen(true)}
-                  sx={{ bgcolor: '#F59E0B', '&:hover': { bgcolor: '#D97706' } }}
-                >
-                  Allocate Resource
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        </Grid>
+        <Box sx={{ mt: 4 }}>
+          <Button
+            variant="contained"
+            size="large"
+            startIcon={<AddIcon />}
+            onClick={() => setProjectFormOpen(true)}
+          >
+            Add New Project
+          </Button>
+        </Box>
 
         <Box sx={{ mt: 4, p: 3, bgcolor: 'info.lighter', borderRadius: 1 }}>
           <Typography variant="h6" gutterBottom>
-            Data Entry Workflow
+            What to Enter
           </Typography>
           <Typography variant="body2" component="div">
-            <ol style={{ margin: '8px 0', paddingLeft: '20px' }}>
-              <li>Start by adding a <strong>Client</strong> - this represents the company or organization</li>
-              <li>Create a <strong>Project</strong> and link it to the client</li>
-              <li>Add <strong>Financial Data</strong> for each month/period to track project performance</li>
-              <li><strong>Allocate Resources</strong> (staff/third-party) to projects with hours worked - this calculates COGS automatically</li>
-              <li>View your data in the Dashboard for analysis and insights</li>
-            </ol>
+            <strong>Project Information:</strong>
+            <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
+              <li>Client Name, Contract Number, Oracle ID</li>
+              <li>Project Name and Currency</li>
+              <li>Local Services Value, Baseline Hours</li>
+              <li>Local Fair Services Value, Total Non-Bill Hours</li>
+              <li>Closure Date</li>
+            </ul>
+            <strong>Resource Hours:</strong>
+            <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
+              <li>Enter hours worked for each staff role</li>
+              <li>Costs are automatically calculated based on hourly rates</li>
+              <li>Leave blank for roles not used on the project</li>
+            </ul>
           </Typography>
         </Box>
       </Paper>
 
-      {/* Form Dialogs */}
-      <ClientForm
-        open={clientFormOpen}
-        onClose={() => setClientFormOpen(false)}
-        onSuccess={handleSuccess}
-      />
-      <ProjectForm
+      {/* Form Dialog */}
+      <ProjectEntryForm
         open={projectFormOpen}
         onClose={() => setProjectFormOpen(false)}
-        onSuccess={handleSuccess}
-      />
-      <FinancialDataForm
-        open={financialFormOpen}
-        onClose={() => setFinancialFormOpen(false)}
-        onSuccess={handleSuccess}
-      />
-      <ResourceAllocationForm
-        open={resourceFormOpen}
-        onClose={() => setResourceFormOpen(false)}
         onSuccess={handleSuccess}
       />
     </Container>

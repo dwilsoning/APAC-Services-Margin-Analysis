@@ -22,14 +22,16 @@ import {
   Upload as UploadIcon,
   Help as HelpIcon,
   People as PeopleIcon,
+  Business as BusinessIcon,
 } from '@mui/icons-material';
 import DataEntry from './pages/DataEntry';
 import StaffRoles from './pages/StaffRoles';
 import ThirdPartyResources from './pages/ThirdPartyResources';
+import Clients from './pages/Clients';
 import axios from 'axios';
 import './App.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 const theme = createTheme({
   palette: {
@@ -114,11 +116,11 @@ function App() {
               <Button
                 color="inherit"
                 component={Link}
-                to="/upload"
-                startIcon={<UploadIcon />}
+                to="/clients"
+                startIcon={<BusinessIcon />}
                 sx={{ fontWeight: 500 }}
               >
-                Upload
+                Clients
               </Button>
               <Button
                 color="inherit"
@@ -137,6 +139,15 @@ function App() {
                 sx={{ fontWeight: 500 }}
               >
                 Third-Party
+              </Button>
+              <Button
+                color="inherit"
+                component={Link}
+                to="/upload"
+                startIcon={<UploadIcon />}
+                sx={{ fontWeight: 500 }}
+              >
+                Upload
               </Button>
               <Button
                 color="inherit"
@@ -159,9 +170,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/data-entry" element={<DataEntry />} />
-            <Route path="/upload" element={<Upload />} />
+            <Route path="/clients" element={<Clients />} />
             <Route path="/staff-roles" element={<StaffRoles />} />
             <Route path="/third-party" element={<ThirdPartyResources />} />
+            <Route path="/upload" element={<Upload />} />
           </Routes>
         </Box>
 
