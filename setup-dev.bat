@@ -35,8 +35,8 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Initializing database...
-call npm run init-db
+echo Initializing database with margin analysis schema...
+call npm run init-margin-schema
 if errorlevel 1 (
     echo ERROR: Failed to initialize database
     cd ..
